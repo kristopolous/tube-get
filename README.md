@@ -1,6 +1,6 @@
 # tube-get
 
-There's a bunch of adult content video sites out there.
+There's a bunch of adult content video sites out there. This is a browser independent easy way to download their content for free.
 
 The business models are fairly similar: You watch an allotment of videos in their embedded player per some time period and then you have to pay.
 
