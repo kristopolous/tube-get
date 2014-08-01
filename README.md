@@ -37,7 +37,7 @@ So that's it -- a few curls, a few greps --- that's all that you need.
 
 ### Isn't this unethical
 
-Essentially 100% of the content on these sites were uploaded without the permission of the creator.  They are charging you to view content that they essentially have no legal right to distribute or show.
+Essentially 100% of the content on these sites were uploaded without the permission of the creator.  They are charging you to view content that they have no legal right to distribute or show - yet alone profit from.
 
 So fuck 'em. Also, the embedded video players are terrible. They don't buffer right, the scrubbing is awful, the offsetting is inaccurate, the decoding is really poor ... I mean it's across the board a terrible experience.
 
