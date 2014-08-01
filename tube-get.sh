@@ -24,6 +24,6 @@ while [ 0 ]; do
 wget \
   --header="Referer: $page" \
   --user-agent="Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:30.0) Gecko/20100101 Firefox/30.0"\
-  -c "$video" &
+  "$video" &
 echo "$video" >> tube-get.sources-list.txt
 done 
