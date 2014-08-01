@@ -1,13 +1,25 @@
 #!/bin/bash
-cd $1
+if [ $# -gt 0 ]; then
+  cd $1
+fi
+
 while [ 0 ]; do
+
   read page
-  video=`curl -s "$page" | grep -oP '(http[:\s\/\w\.]*mp4)[\"]' | head -1`
+  tmp=tube-get.tmp
+  curl -s "$page" > $tmp
+  video=`cat $tmp | grep -oP '(http[:\s\/\w\.]*mp4)[\"]' | head -1`
   if [ -z "$video" ]; then
-    url=`curl -s "$page" | grep -oP '([:\/\w\.]*playerConfig.php[^"]*)' | uniq`
-    echo $url
-    video=`curl -s "$url" | grep defaultVideo | sed s/defaultVideo:// | sed -E s/'\;.*'// | tr '\t' ' ' | sed -E 's/\s+//'`
+    url=`cat $tmp | grep -oP '([:\/\w\.]*playerConfig.php[^"]*)' | uniq`
+
+    if [ ! -z "$url" ]; then
+      echo $url
+      video=`curl -s "$url" | grep defaultVideo | sed s/defaultVideo:// | sed -E s/'\;.*'// | tr '\t' ' ' | sed -E 's/\s+//'`
+    else
+      video=`cat $tmp | grep -oP '(?<=file=)(http[:\s\/\w\.]*(flv|mp4))' | head -1`
+    fi
   fi
+  unlink $tmp
 
 wget \
   --header="Referer: $page" \
