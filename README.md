@@ -8,7 +8,7 @@ They seem to be using mostly the same software to do this. It's pretty trivial t
 
 I've had a number of solutions over the years, but the latest I'm proud of for its simplicity.
 
-# usage
+# Usage
 
 Written in bash, it takes URLs from the standard in.  You execute and then put URLs in the input
 
@@ -35,6 +35,11 @@ I found that none of this was actually necessary - either a direct link to the v
 
 So that's it -- a few curls, a few greps --- that's all that you need.
 
+### Isn't this unethical
+
+Essentially 100% of the content on these sites were uploaded without the permission of the creator.  They are charging you to view content that they essentially have no legal right to distribute or show.
+
+So fuck 'em. Also, the embedded video players are terrible. They don't buffer right, the scrubbing is awful, the offsetting is inaccurate, the decoding is really poor ... I mean it's across the board a terrible experience.
 
 ## Support
 
