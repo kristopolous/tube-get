@@ -8,7 +8,7 @@ while [ 0 ]; do
   read page
   tmp=tube-get.tmp
   curl -s "$page" > $tmp
-  video=`cat $tmp | grep -oP '(http[:\s\/\w\.]*mp4)[\"]' | head -1`
+  video=`cat $tmp | grep -oP '(http[:\s\/\w\.]*(flv|mp4))[\"]' | head -1`
   if [ -z "$video" ]; then
     url=`cat $tmp | grep -oP '([:\/\w\.]*playerConfig.php[^"]*)' | uniq`
 
@@ -17,6 +17,9 @@ while [ 0 ]; do
       video=`curl -s "$url" | grep defaultVideo | sed s/defaultVideo:// | sed -E s/'\;.*'// | tr '\t' ' ' | sed -E 's/\s+//'`
     else
       video=`cat $tmp | grep -oP '(?<=file=)(http[:\s\/\w\.]*(flv|mp4))' | head -1`
+      if [ -z "$video" ]; then
+        video=`cat $tmp | grep -oP '(http[:\s\/\w\.]*(flv|mp4))' | head -1`
+      fi
     fi
   fi
   unlink $tmp
