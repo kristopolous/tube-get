@@ -25,8 +25,10 @@ while [ 0 ]; do
   unlink $tmp
 
 wget \
+  --no-use-server-timestamps \
   --header="Referer: $page" \
   --user-agent="Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:30.0) Gecko/20100101 Firefox/30.0"\
   "$video" &
 echo "$video" >> tube-get.sources-list.txt
+
 done 
