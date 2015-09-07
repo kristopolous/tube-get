@@ -26,7 +26,6 @@ while [ 0 ]; do
   unlink $tmp
 
   has_domain=`echo $video | grep -oP '(http[:\s\/]*[^\/]*)' | wc -c`
-  echo "<<"$has_domain
   if [ $has_domain -eq 0 ]; then
     video=$domain"/"$video
   fi 
