@@ -7,6 +7,7 @@ while [ 0 ]; do
 
   read page
   tmp=tube-get.tmp
+  domain=`echo $page | grep -oP '(http[:\s\/]*[^\/]*)'`
   curl -s "$page" > $tmp
   video=`cat $tmp | grep -oP '(http[:\s\/\w\.]*(flv|mp4))[\"]' | head -1`
   if [ -z "$video" ]; then
@@ -24,6 +25,13 @@ while [ 0 ]; do
   fi
   unlink $tmp
 
+  has_domain=`echo $video | grep -oP '(http[:\s\/]*[^\/]*)' | wc -c`
+  echo "<<"$has_domain
+  if [ $has_domain -eq 0 ]; then
+    video=$domain"/"$video
+  fi 
+
+  echo $video
 wget \
   --no-use-server-timestamps \
   --header="Referer: $page" \
