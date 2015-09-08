@@ -12,11 +12,14 @@ while [ 0 ]; do
   video=`cat $tmp | grep -oP '(http[:\s\/\w\.]*(flv|mp4))[\"]' | head -1`
   if [ -z "$video" ]; then
     url=`cat $tmp | grep -oP '([:\/\w\.]*playerConfig.php[^"]*)' | uniq`
+    echo ">> $url"
 
-    if [ ! -z "$url" ]; then
-      echo $url
-      video=`curl -s "$url" | grep defaultVideo | sed s/defaultVideo:// | sed -E s/'\;.*'// | tr '\t' ' ' | sed -E 's/\s+//'`
+    if [ -z "$url" ]; then
+      video=`cat $tmp | grep -oP '(?<=file=)(http[:\s\/\w\.]*(flv|mp4))' | head -1`
+      [ -z "$video" ] && video=`cat $tmp | grep -oP '(http[:\s\/\w\.]*(flv|mp4))' | head -1`
     else
+      echo $url
+      #video=`curl -s "$url" | grep defaultVideo | sed s/defaultVideo:// | sed -E s/'\;.*'// | tr '\t' ' ' | sed -E 's/\s+//'`
       video=`cat $tmp | grep -oP '(?<=file=)(http[:\s\/\w\.]*(flv|mp4))' | head -1`
       if [ -z "$video" ]; then
         video=`cat $tmp | grep -oP '(http[:\s\/\w\.]*(flv|mp4))' | head -1`
