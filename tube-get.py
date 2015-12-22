@@ -14,6 +14,12 @@ while True:
         continue
 
     source_url = line
+
+    line = re.sub('\(', '%28', line)
+    line = re.sub('\)', '%29', line)
+    line = re.sub(';', '\;', line)
+    print line
+
     domain = re.search('(http[:\s\/]*[^\/]*)', line).group(1)
     page = os.popen('curl -s %s' % line).read()
 
