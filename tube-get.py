@@ -52,6 +52,8 @@ while True:
     if not has_domain:
         video = "%s/%s" % (domain, video)
 
+    video = video.strip('"')
+
     print video
     options = " ".join([
         '--no-use-server-timestamps',
