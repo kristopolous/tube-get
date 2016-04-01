@@ -1,6 +1,4 @@
-# tube-get
-
-There's a bunch of adult content video sites out there. This is a browser independent easy way to download their content for free.
+**tube-get** is a python script that acts as a browser independent easy way to freely download video content from adult sites.
 
 The business models are fairly similar: You watch an allotment of videos in their embedded player per some time period and then you have to pay.
 
@@ -10,9 +8,9 @@ I've had a number of solutions over the years, but the latest I'm proud of for i
 
 # Usage
 
-Written in python (and legacy in bash), it takes URLs from the standard in.  You execute and then put URLs in the input
+Start it up by specifying a directory to save to and then past URLs in the console after you start:
 
-    $ ./tube-get.sh [ Directory to save stuff ]
+    $ ./tube-get.py [ Directory to save stuff ]
     http://somevideosite.com/somevideolink.html
 
 These correspond to the links if you were to click through to the page with their embedded player. (as in, right click in the browser, copy link to clipboard, then paste it into the terminal)
