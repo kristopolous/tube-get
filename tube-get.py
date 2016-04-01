@@ -8,6 +8,9 @@ re_kv_url = re.compile('(?<=file=)(http[:\s\/\w\.]*(flv|mp4))')
 if len(sys.argv) > 1:
     os.chdir(sys.argv[1])
 
+def shellquote(s):
+    return "'" + s.replace("'", "'\\''") + "'"
+
 while True:
     line = sys.stdin.readline().strip()
     if len(line) == 0:
@@ -52,12 +55,14 @@ while True:
     if not has_domain:
         video = "%s/%s" % (domain, video)
 
+    video = video.strip('"')
+
     print video
     options = " ".join([
         '--no-use-server-timestamps',
         '--header="Referer: %s"' % source_url,
         '--user-agent="Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:30.0) Gecko/20100101 Firefox/41.0"',
-        video
+        shellquote(video)
     ])
 
     os.popen('wget %s &' % options)
