@@ -11,6 +11,9 @@ if len(sys.argv) > 1:
 def shellquote(s):
     return "'" + s.replace("'", "'\\''") + "'"
 
+def log(what):
+    print(">> %s" % what)
+
 while True:
     line = sys.stdin.readline().strip()
     if len(line) == 0:
@@ -24,12 +27,14 @@ while True:
 
     domain = re.search('(http[:\s\/]*[^\/]*)', line).group(1)
     page = os.popen('curl -s %s' % line).read()
-
-    video = re.search('(http[:\s\/\w\.]*(flv|mp4))[\"]', page)
+    log(line)
+    video = re.search('(http[:\-\s\/\w\.]*(flv|mp4))[\"\']', page)
     if not video:
+        log("No mp4 found")
         player_config_url = re.search('([:\/\w\.]*playerConfig.php[^"]*)', page)
 
         if not player_config_url:
+            log("No config php found")
             video = re_kv_url.search(page)
             #print video
 
@@ -55,7 +60,7 @@ while True:
     if not has_domain:
         video = "%s/%s" % (domain, video)
 
-    video = video.strip('"')
+    video = video.strip('\'"')
 
     print video
     options = " ".join([
