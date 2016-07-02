@@ -2,8 +2,8 @@
 
 import sys,os,re,pprint
 
-re_generic_url = re.compile('(http[:\s\/\w\.]*[flv|mp4])')
-re_kv_url = re.compile('(?<=file=)(http[:\s\/\w\.]*[flv|mp4])')
+re_generic_url = re.compile('(http[:\s\/\w\.]*(?:flv|mp4))')
+re_kv_url = re.compile('(?<=file=)(http[:\s\/\w\.]*(?:flv|mp4))')
 pp = pprint.PrettyPrinter(indent=4)
 
 if len(sys.argv) > 1:
@@ -29,7 +29,7 @@ while True:
     domain = re.search('(http[:\s\/]*[^\/]*)', line).group(1)
     page = os.popen('curl -s %s' % line).read()
     #log(line)
-    video = re.findall('(http[:\-\s\/\w\.]*[flv|mp4])[\"\'\&]', page)
+    video = re.findall('(http[:\-\s\/\w\.]*(?:flv|mp4))[\"\'\&]', page)
     if not video:
         log("No mp4 found")
         player_config_url = re.findall('([:\/\w\.]*playerConfig.php[^"]*)', page)
@@ -51,10 +51,11 @@ while True:
 
         #print player_config_url
 
-    pp.pprint(video)
-    if video:
-        video = video.group(0)
+    video = filter(lambda x: x.find('preview') == -1, video)
+    #pp.pprint(video)
 
+    if video:
+        video = video[0]
 
     if not video:
         print("Error not found for %s" % source_url)
