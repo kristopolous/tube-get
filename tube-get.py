@@ -69,7 +69,6 @@ while True:
     video = video.strip('\'"')
 
     print video
-    """
     options = " ".join([
         '--no-use-server-timestamps',
         '--header="Referer: %s"' % source_url,
@@ -81,5 +80,4 @@ while True:
 
     with open("tube-get.sources-list.txt", "a") as log:
         log.write("%s -> %s\n" %( source_url, video ))
-    """
 
