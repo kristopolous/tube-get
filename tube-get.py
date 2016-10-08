@@ -15,10 +15,9 @@ def shellquote(s):
 def log(what):
     print(">> %s" % what)
 
-while True:
-    line = sys.stdin.readline().strip()
+def grab(line):
     if len(line) == 0:
-        continue
+        return False
 
     source_url = line
 
@@ -55,10 +54,20 @@ while True:
     #pp.pprint(video)
 
     if video:
-        video = video[0]
+        return video[0]
 
     if not video:
-        print("Error not found for %s" % source_url)
+        iframe = re.findall('iframe src=.(http[^"]*)', page)
+        if iframe:
+            log("Found iframe")
+            return grab(iframe[0])
+
+
+while True:
+    line = sys.stdin.readline().strip()
+    video = grab(line)
+
+    if not video:
         continue
 
     has_domain = re.search('(http[:\s\/]*[^\/]*)', video) 
