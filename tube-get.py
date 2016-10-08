@@ -103,13 +103,13 @@ while True:
     print video
     options = " ".join([
         '--no-use-server-timestamps',
-        '--header="Referer: %s"' % source_url,
+        '--header="Referer: %s"' % line,
         '--user-agent="Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:30.0) Gecko/20100101 Firefox/41.0"',
         shellquote(video)
     ])
 
     os.popen('wget %s &' % options)
 
-    with open("tube-get.sources-list.txt", "a") as log:
-        log.write("%s -> %s\n" %( source_url, video ))
+    with open("tube-get.sources-list.txt", "a") as mylog:
+        mylog.write("%s -> %s\n" %( line, video ))
 
