@@ -15,6 +15,27 @@ def shellquote(s):
 def log(what):
     print(">> %s" % what)
 
+# If everything else failed then we look for an rtmp stanza
+# which is usually supplied in JSON and using flowplayer 
+def rtmpsearch(page):
+    path = re.findall('url:\s*[\'\"](.*(?:flv|mp4))[\'\"]', page)
+    base = re.findall('netConnectionUrl:\s*[\'\"](rtmp:[^\'\"]*)', page)
+
+    if path and base:
+        # for some weird reason rtmpdump has a bug where it eats up the path
+        url = "%s/a/a%s" % (base[0], path[0])
+        log("Found rtmp, using %s" % url)
+        outfile = url.split('/')[-1]
+        options = " ".join([
+            '-Rr',
+            shellquote(url),
+            '-o',
+            shellquote(outfile)
+        ])
+
+        os.popen('rtmpdump %s &' % options)
+        return False
+
 def grab(line):
     if len(line) == 0:
         return False
@@ -59,8 +80,10 @@ def grab(line):
     if not video:
         iframe = re.findall('iframe src=.(http[^"]*)', page)
         if iframe:
-            log("Found iframe")
+            log("Found iframe: %s" % iframe[0])
             return grab(iframe[0])
+        else:
+            rtmpsearch(page)
 
 
 while True:
