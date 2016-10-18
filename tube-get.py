@@ -91,24 +91,24 @@ while True:
     video = grab(line)
 
     if not video:
-        continue
+        video = "(FAILED)"
+    else:
+        has_domain = re.search('(http[:\s\/]*[^\/]*)', video) 
 
-    has_domain = re.search('(http[:\s\/]*[^\/]*)', video) 
+        if not has_domain:
+            video = "%s/%s" % (domain, video)
 
-    if not has_domain:
-        video = "%s/%s" % (domain, video)
+        video = video.strip('\'"')
 
-    video = video.strip('\'"')
+        print video
+        options = " ".join([
+            '--no-use-server-timestamps',
+            '--header="Referer: %s"' % line,
+            '--user-agent="Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:30.0) Gecko/20100101 Firefox/41.0"',
+            shellquote(video)
+        ])
 
-    print video
-    options = " ".join([
-        '--no-use-server-timestamps',
-        '--header="Referer: %s"' % line,
-        '--user-agent="Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:30.0) Gecko/20100101 Firefox/41.0"',
-        shellquote(video)
-    ])
-
-    os.popen('wget %s &' % options)
+        os.popen('wget %s &' % options)
 
     with open("tube-get.sources-list.txt", "a") as mylog:
         mylog.write("%s -> %s\n" %( line, video ))
