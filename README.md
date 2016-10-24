@@ -22,20 +22,7 @@ Then it will download the content and save it locally.
 ## Sites that don't work
 
 ### Stuff that's implemented 'well'
-People who know technology like youtube this won't work for.  I would imagine xtube would also fail although I haven't tried it.  This works on the smaller sites though.  
-
-### RTMP
-There's a protocol called `rtmp` that some sites use.  mpv, mplayer and rtmpdump support rtmp with some caveats.  So let's see, usually you'll see an rtmp root specified in some flowplayer stanza, such as `rtmp://videos.site.com/vod2`  and then you'll see a colon separated format for the video, something like `content: MP4:video.mp4`.  
-
-First, I don't even *try* to to reconstruct the full URL here at the moment because I don't actually do the rtmpdump'ing.  There's a number of issues with the rtmpdump technology, and some workarounds ... I'll probably get to them:
-
-  1. rtmpdump tries to pull the whole video at your pipe rate (such as 10Mb/s).  Some servers will support burst data but then try to limit your download.  rtmpdump considers this a failure and likes to barf on it or get confused.
-
-  2. If you make modern git versions of rtmpdump with the `-R` realtime and `-v` live stream options, then the videos mostly successfully save to disk.
-
-Anyway, rtmp servers cost monies and html5 players don't support them so most video sites don't use them since it's a cost
-and a flash lock-in.  It was somewhat popular up to about 2010.   If you run into sites that use this then email me and I
-can get the support in.  But as of now, it happens so infrequently that the manual steps aren't that bad.
+People who know technology like youtube this won't work for.  I would imagine xtube would also fail although I haven't tried it.  This works on the smaller sites though.  It also looks for embed tags and is smart enough to parse rtmp streams
 
 ## Runs in the background.
 
