@@ -17,16 +17,18 @@ These correspond to the links if you were to click through to the page with thei
 
 After you press enter the magic begins.  The script runs a few attempts trying to sniff the common pre-packaged technologies that are used to build these sites and derives the video url.
 
-Then it will download the content and save it locally.
+Then it will download the content and save it locally. 
 
-## Sites that don't work
-
-### Stuff that's implemented 'well'
-People who know technology like youtube this won't work for.  I would imagine xtube would also fail although I haven't tried it.  This works on the smaller sites though.  It also looks for embed tags and is smart enough to parse rtmp streams
+Some features:
+ 
+ * Looks for embed tags and can follow them
+ * Knows how to deal with rtmp streams (you need rtmpdump for it).
+ * Figures how what the proper HTTP referer to use is
+ * Logs the link that it started with along with what it was derived to ... or if it was a failure
 
 ## Runs in the background.
 
-It's important to note that when it's wget'ing the content, it's in the background.  The script is ready at this time for more urls.
+When it's wget'ing the content the script is ready at this time for more urls.
 
 You don't have to wait.  Just paste another in there and it will do the magic and spawn another wget.  
 
@@ -34,9 +36,7 @@ You don't have to wait.  Just paste another in there and it will do the magic an
 
 So this is a pretty slick method - it doesn't use cookies or run in the browser at all so you don't get punted the paywall.  Further, it's generic enough that it works on a large variety of sites without actually having to specify the site or do the up-keep - previous soultions I had would use elements from the generated page to concoct a url. 
 
-I found that none of this was actually necessary - either a direct link to the video or a link to a "flash vars" file which has the video exists in the html of 95% of the sites I've tried.
-
-So that's it -- a few curls, a few greps --- that's all that you need.
+I found that none of this was actually necessary - either a direct link to the video or a link to a "flash vars" file which has the video exists in the html of 95% of the sites I've tried. When a site breaks this I generally spend some time to fix it.  So I keep it pretty up to date.
 
 ### Isn't this unethical
 
