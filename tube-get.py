@@ -88,7 +88,11 @@ def grab(line):
 
 while True:
     line = sys.stdin.readline().strip()
-    video = grab(line)
+    try:
+        video = grab(line)
+    except:
+        print "Failed to read %s" % line
+        continue
 
     if not video:
         video = "(FAILED)"
