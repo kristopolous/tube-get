@@ -120,5 +120,5 @@ while True:
             os.popen('wget %s &' % options)
 
     with open("tube-get.sources-list.txt", "a") as mylog:
-        mylog.write("%s -> %s\n" %( line, video[1] ))
+        mylog.write("%s -> %s\n" %( line, url ))
 
