@@ -88,6 +88,9 @@ def grab(line):
 
 while True:
     line = sys.stdin.readline().strip()
+    if len(line) == 0:
+        continue
+
     try:
         video = grab(line)
     except:
