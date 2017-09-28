@@ -34,7 +34,7 @@ def rtmpsearch(page):
         ])
 
         os.popen('rtmpdump %s &' % options)
-        return False
+        return ['rtmp', url]
 
 def grab(line):
     if len(line) == 0:
@@ -75,7 +75,7 @@ def grab(line):
     #pp.pprint(video)
 
     if video:
-        return video[0]
+        return ['get', video[0]]
 
     if not video:
         iframe = re.findall('iframe src=.(http[^"]*)', page)
@@ -83,7 +83,7 @@ def grab(line):
             log("Found iframe: %s" % iframe[0])
             return grab(iframe[0])
         else:
-            rtmpsearch(page)
+            return rtmpsearch(page)
 
 
 while True:
@@ -95,25 +95,27 @@ while True:
         continue
 
     if not video:
-        video = "(FAILED)"
+        url = "(FAILED)"
     else:
-        has_domain = re.search('(http[:\s\/]*[^\/]*)', video) 
+        url = video[1]
+        if video[0] == 'get':
+            has_domain = re.search('(http[:\s\/]*[^\/]*)', url) 
 
-        if not has_domain:
-            video = "%s/%s" % (domain, video)
+            if not has_domain:
+                video = "%s/%s" % (domain, url)
 
-        video = video.strip('\'"')
+            url = url.strip('\'"')
 
-        print video
-        options = " ".join([
-            '--no-use-server-timestamps',
-            '--header="Referer: %s"' % line,
-            '--user-agent="Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:30.0) Gecko/20100101 Firefox/41.0"',
-            shellquote(video)
-        ])
+            print url
+            options = " ".join([
+                '--no-use-server-timestamps',
+                '--header="Referer: %s"' % line,
+                '--user-agent="Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:30.0) Gecko/20100101 Firefox/41.0"',
+                shellquote(url)
+            ])
 
-        os.popen('wget %s &' % options)
+            os.popen('wget %s &' % options)
 
     with open("tube-get.sources-list.txt", "a") as mylog:
-        mylog.write("%s -> %s\n" %( line, video ))
+        mylog.write("%s -> %s\n" %( line, video[1] ))
 
