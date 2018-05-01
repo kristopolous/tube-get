@@ -78,7 +78,7 @@ def grab(line):
         return ['get', video[0]]
 
     if not video:
-        iframe = re.findall('iframe src=.(http[^"]*)', page)
+        iframe = re.findall('iframe[^>]*src=.(http[^"]*)', page)
         if iframe:
             log("Found iframe: %s" % iframe[0])
             return grab(iframe[0])
