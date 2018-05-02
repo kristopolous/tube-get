@@ -146,5 +146,4 @@ while True:
             url = 'FAILED'
             log("Failed for {} (size:{})".format(line, video[2]))
 
-        mylog.write("%s -> %s\n" %( line, url ))
 
