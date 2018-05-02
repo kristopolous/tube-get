@@ -1,9 +1,10 @@
 #!/usr/bin/python
 
-import sys,os,re,pprint
+import sys,os,re,pprint,subprocess
 
-re_generic_url = re.compile('(http[:\s\/\w\.]*(?:flv|mp4))')
-re_kv_url = re.compile('(?<=file=)(http[:\s\/\w\.]*(?:flv|mp4))')
+UA="Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:30.0) Gecko/20100101 Firefox/41.0"
+re_generic_url = re.compile('(http[:\s\/\w\.]*(?:flv|mp4)[^"\']*)')
+re_kv_url = re.compile('(?<=file=)(http[:\s\/\w\.]*(?:flv|mp4)[^"\']*)')
 pp = pprint.PrettyPrinter(indent=4)
 
 if len(sys.argv) > 1:
@@ -17,7 +18,7 @@ def log(what):
 
 # If everything else failed then we look for an rtmp stanza
 # which is usually supplied in JSON and using flowplayer 
-def rtmpsearch(page):
+def rtmpsearch(page, param):
     path = re.findall('url:\s*[\'\"](.*(?:flv|mp4))[\'\"]', page)
     base = re.findall('netConnectionUrl:\s*[\'\"](rtmp:[^\'\"]*)', page)
 
@@ -34,9 +35,11 @@ def rtmpsearch(page):
         ])
 
         os.popen('rtmpdump %s &' % options)
-        return ['rtmp', url]
+        return ['rtmp', url, param]
 
-def grab(line):
+    return [False, False, param]
+
+def grab(line, param=False):
     if len(line) == 0:
         return False
 
@@ -47,9 +50,14 @@ def grab(line):
     line = re.sub(';', '\;', line)
 
     domain = re.search('(http[:\s\/]*[^\/]*)', line).group(1)
-    page = os.popen('curl -s %s' % line).read()
+    cmd = 'curl -L -e "{}" -s -A "{}" "{}"'.format(domain, UA, line)
+    print(cmd)
+    page = os.popen(cmd).read()
+    if not param:
+        param = len(page)
+
     #log(line)
-    video = re.findall('(http[:\-\s\/\w\.]*(?:flv|mp4))[\"\'\&]', page)
+    video = re.findall('(http[:\-\s\/\w\.]*(?:flv|mp4)\??[^"\']*)[\"\']', page)
     if not video:
         log("No mp4 found")
         player_config_url = re.findall('([:\/\w\.]*playerConfig.php[^"]*)', page)
@@ -75,19 +83,31 @@ def grab(line):
     #pp.pprint(video)
 
     if video:
-        return ['get', video[0]]
+        return ['get', video[0], param]
 
     if not video:
         iframe = re.findall('iframe[^>]*src=.(http[^"]*)', page)
         if iframe:
             log("Found iframe: %s" % iframe[0])
-            return grab(iframe[0])
+            return grab(iframe[0], param)
         else:
-            return rtmpsearch(page)
+            return rtmpsearch(page, param)
+
+    return [False, False, param]
 
 
 while True:
     line = sys.stdin.readline().strip()
+    """
+    if os.path.exists('/usr/bin/xclip'):
+        print("xclip")
+        p = subprocess.Popen(['/usr/bin/xclip','-verbose'],stdout=subprocess.PIPE,stdin=subprocess.PIPE)
+        p.stdin.write(b'\n')
+        p.communicate()[0]
+        p.stdin.close()
+        sys.exit(0)
+    """
+
     if len(line) == 0:
         continue
 
@@ -97,7 +117,7 @@ while True:
         print "Failed to read %s" % line
         continue
 
-    if not video:
+    if video[0] == False:
         url = "(FAILED)"
     else:
         url = video[1]
@@ -109,16 +129,22 @@ while True:
 
             url = url.strip('\'"')
 
-            print url
             options = " ".join([
                 '--no-use-server-timestamps',
                 '--header="Referer: %s"' % line,
-                '--user-agent="Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:30.0) Gecko/20100101 Firefox/41.0"',
+                '--user-agent="{}"'.format(UA),
                 shellquote(url)
             ])
 
+            print(options)
             os.popen('wget %s &' % options)
 
     with open("tube-get.sources-list.txt", "a") as mylog:
-        mylog.write("%s -> %s\n" %( line, video[1] ))
+        if video:
+            url = video[1]
+        else:
+            url = 'FAILED'
+            log("Failed for {} (size:{})".format(line, video[2]))
+
+        mylog.write("%s -> %s\n" %( line, url ))
 
