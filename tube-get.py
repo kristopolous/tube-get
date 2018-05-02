@@ -57,7 +57,7 @@ def grab(line, param=False):
         param = len(page)
 
     #log(line)
-    video = re.findall('(http[:\-\s\/\w\.]*(?:flv|mp4)\??[^"\']*)[\"\']', page)
+    video = re.findall('(http[:\-\s\/\w\.=,+]*(?:flv|mp4)\??[^"\']*)[\"\']', page)
     if not video:
         log("No mp4 found")
         player_config_url = re.findall('([:\/\w\.]*playerConfig.php[^"]*)', page)
