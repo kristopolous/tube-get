@@ -36,46 +36,40 @@ def rtmpsearch(page, param):
 
         os.popen('rtmpdump %s &' % options)
         return ['rtmp', url, param]
+    else:
+        log("No rtmp found")
 
     return [False, False, param]
 
-def grab(line, param=False):
-    if len(line) == 0:
-        return False
-
-    source_url = line
-
-    line = re.sub('\(', '%28', line)
-    line = re.sub('\)', '%29', line)
-    line = re.sub(';', '\;', line)
-
-    domain = re.search('(http[:\s\/]*[^\/]*)', line).group(1)
-    cmd = 'curl -L -e "{}" -s -A "{}" "{}"'.format(domain, UA, line)
-    print(cmd)
-    page = os.popen(cmd).read()
-    if not param:
-        param = len(page)
+def probe(html, param=False, depth=1):
+    maxlevel=5
+    if depth > maxlevel:
+        log("{} levels deep, giving up".format(maxlevel))
+        return [False, False, False]
 
     #log(line)
-    video = re.findall('(http[:\-\s\/\w\.=,+]*(?:flv|mp4)\??[^"\']*)[\"\']', page)
+    video = re.findall('(http[:\-\s\/\w\.=,+]*(?:flv|mp4)\??[^"\']*)[\"\']', html)
+    if video:
+        video = filter(lambda x: x.find('.jpg') == -1, video)
+
     if not video:
         log("No mp4 found")
-        player_config_url = re.findall('([:\/\w\.]*playerConfig.php[^"]*)', page)
+        player_config_url = re.findall('([:\/\w\.]*playerConfig.php[^"]*)', html)
 
         if not player_config_url:
             log("No config php found")
-            video = re_kv_url.findall(page)
+            video = re_kv_url.findall(html)
             #print video
 
             if not video:
-                video = re_generic_url.findall(page)
+                video = re_generic_url.findall(html)
                 #print video
 
         else:
             #print player_config_url
-            video = re_kv_url.search(page)
+            video = re_kv_url.search(html)
             if not video:
-                video = re_generic_url.findall(page)
+                video = re_generic_url.findall(html)
 
         #print player_config_url
 
@@ -86,15 +80,51 @@ def grab(line, param=False):
         return ['get', video[0], param]
 
     if not video:
-        iframe = re.findall('iframe[^>]*src=.(http[^"]*)', page)
+        iframe = re.findall('iframe[^>]*src=.(http[^"]*)', html)
         if iframe:
             log("Found iframe: %s" % iframe[0])
-            return grab(iframe[0], param)
+            res = grab(iframe[0], param, depth+1)
         else:
-            return rtmpsearch(page, param)
+            log("No iframe found")
+            res = rtmpsearch(html, param)
 
-    return [False, False, param]
+    if res[0] == False:
+        jsSnippet = re.findall('<script>(.+?(?=</script>))', html.replace('\n',' '), re.MULTILINE)
+        if jsSnippet:
+            candidateList = filter(lambda x: x.find('String.fromCharCode') > -1, jsSnippet)
+            if len(candidateList) > 0:
+                attempt = candidateList[0]
+                if attempt.find('document.write') > -1:
+                    attempt = attempt.replace('document.write', 'console.log')
 
+                    cmd = "/usr/local/bin/node -e {}".format(shellquote(attempt))
+                    snippet = os.popen("/usr/local/bin/node -e {}".format(shellquote(attempt))).read()
+                    log("Found javascript obfuscation: {}".format(snippet))
+
+                    res = probe(snippet, param, depth+1)
+        if res[0] == False:
+            log("No obfuscated JS found")
+
+    return res
+
+def grab(line, param=False, depth=1):
+    if len(line) == 0:
+        return False
+
+    source_url = line
+
+    line = re.sub('\(', '%28', line)
+    line = re.sub('\)', '%29', line)
+    line = re.sub(';', '\;', line)
+
+    domain = re.search('(http[:\s\/]*[^\/]*)', line).group(1)
+    cmd = 'curl -L -e {} -s -A {} {}'.format(shellquote(domain), shellquote(UA), shellquote(line))
+    print(cmd)
+    page = os.popen(cmd).read()
+    if not param:
+        param = len(page)
+
+    return probe(page, param, depth)
 
 while True:
     line = sys.stdin.readline().strip()
@@ -111,11 +141,11 @@ while True:
     if len(line) == 0:
         continue
 
-    try:
-        video = grab(line)
-    except:
-        print "Failed to read %s" % line
-        continue
+    #try:
+    video = grab(line)
+    #except:
+    #    print "Failed to read %s" % line
+    #   continue
 
     if video[0] == False:
         url = "(FAILED)"
@@ -128,8 +158,10 @@ while True:
                 video = "%s/%s" % (domain, url)
 
             url = url.strip('\'"')
+            fname = re.sub('\?.*', '', url).rstrip('/').split('/')[-1]
 
             options = " ".join([
+                '-O {}'.format(shellquote(fname)),
                 '--no-use-server-timestamps',
                 '--header="Referer: %s"' % line,
                 '--user-agent="{}"'.format(UA),
@@ -145,5 +177,7 @@ while True:
         else:
             url = 'FAILED'
             log("Failed for {} (size:{})".format(line, video[2]))
+
+        mylog.write("%s -> %s\n" %( line, video[1] ))
 
 
