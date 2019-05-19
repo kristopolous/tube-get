@@ -48,9 +48,11 @@ def probe(html, param=False, depth=1):
         return [False, False, False]
 
     #log(line)
-    video = re.findall('(http[:\-\s\/\w\.=,+]*(?:flv|mp4)\??[^"\']*)[\"\']', html)
+    video = re.findall('(http[:\-\s\/\w%\.=,+]*(?:flv|mp4)\??[^"\']*)[\"\']', html)
     if video:
         video = filter(lambda x: x.find('.jpg') == -1, video)
+        video = filter(lambda x: x.find('/thumbs/') == -1, video)
+        print(video)
 
     if not video:
         log("No mp4 found")
