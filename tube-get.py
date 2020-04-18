@@ -1,5 +1,5 @@
 #!/usr/bin/python
-
+import datetime
 import sys,os,re,pprint,subprocess
 
 UA="Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:30.0) Gecko/20100101 Firefox/41.0"
@@ -178,6 +178,6 @@ while True:
             url = 'FAILED'
             log("Failed for {} (size:{})".format(line, video[2]))
 
-        mylog.write("%s -> %s\n" %( line, video[1] ))
+        mylog.write("%s %s -> %s\n" %( datetime.datetime.utcnow(), line, video[1] ))
 
 
