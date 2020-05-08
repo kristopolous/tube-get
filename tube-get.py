@@ -1,4 +1,4 @@
-#!/usr/bin/python
+#!/usr/bin/python3
 import datetime
 import sys,os,re,pprint,subprocess
 
@@ -75,7 +75,7 @@ def probe(html, param=False, depth=1):
 
         #print player_config_url
 
-    video = filter(lambda x: x.find('preview') == -1, video)
+    video = list(filter(lambda x: x.find('preview') == -1, video))
     #pp.pprint(video)
 
     if video:
