@@ -1,14 +1,12 @@
 **tube-get** is a python script that acts as a browser independent easy way to freely download video content from adult sites.
 
-The business models are fairly similar: You watch an allotment of videos in their embedded player per some time period and then you have to pay.
-
-They seem to be using mostly the same software to do this. It's pretty trivial to work around since it leaks enough information for you to derive the location of the content before it presents you with the paywall.
+They seem to be using mostly the same software.
 
 I've had a number of solutions over the years, but the latest I'm proud of for its simplicity.
 
 # Usage
 
-Start it up by specifying a directory to save to and then past URLs in the console after you start:
+Start it up by specifying a directory to save to and then paste URLs in the console after you start:
 
     $ ./tube-get.py [ Directory to save stuff ]
     http://somevideosite.com/somevideolink.html
@@ -17,14 +15,14 @@ These correspond to the links if you were to click through to the page with thei
 
 After you press enter the magic begins.  The script runs a few attempts trying to sniff the common pre-packaged technologies that are used to build these sites and derives the video url.
 
-Then it will download the content and save it locally. 
+Then it will download the content and save it locally. It doesn't use the `<title>` from the site, which is often just a bunch of NSFW words smacked together. A directory full of files with names like 5a96131c58ef9.mp4 is probably ok.  I should probably make a separate sqlite way to organize them though.
 
 Some features:
  
  * Looks for embed tags and can follow them
  * Knows how to deal with rtmp streams (you need rtmpdump for it).
- * Figures how what the proper HTTP referer to use is
- * Logs the link that it started with along with what it was derived to ... or if it was a failure
+ * Figures what the proper HTTP referer to use is
+ * Logs the timestamp, link that it started with, and what it was derived to ... or if it was a failure
 
 ## Runs in the background.
 
@@ -46,4 +44,4 @@ So fuck 'em. Also, the embedded video players are terrible. They don't buffer ri
 
 ## Support
 
-If you'd like it to work on a site that it's not, file an issue and I'll see if it's an easy fix.  Thanks.
+If you'd like it to work on a site that it's not, file an issue and I'll see if it's an easy fix. If you want to do it anonymously, totally understood although there's no place I'd be checking for anonymous tickets. I thought of a brilliant hack ... maybe that will work ... let me try.
