@@ -24,6 +24,20 @@ Some features:
  * Figures what the proper HTTP referer to use is
  * Logs the timestamp, link that it started with, and what it was derived to ... or if it was a failure
 
+2020 May update: Now if the argument has 'http' in it it treats it as a url and then just outputs the video url, this then operates like the `ytdl` option in mpv essentially you can do
+
+```
+tp() { 
+  mplayer $(tube-get.py $1)
+}
+```
+
+then just pass 
+
+    $ tp <url>
+
+on the command line. Super fast
+
 ## Runs in the background.
 
 When it's wget'ing the content the script is ready at this time for more urls.
