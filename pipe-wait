@@ -1,0 +1,8 @@
+#!/bin/bash
+while [ 0 ] ; do
+  path=$(cat $HOME/mpv-pipe) 
+  echo $path >> $HOME/recenturls
+  mplayer -title "$path" -loop 0 -ao null $(tg $path) &
+  sleep 1
+done
+

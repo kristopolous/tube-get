@@ -36,7 +36,7 @@ then just pass
 
     $ tp <url>
 
-on the command line. Super fast
+on the command line. Super fast. I actually do another more complicated set up that invovles a pipe, I've included the pipe tool in the directory for the curious. 
 
 ## Runs in the background.
 
