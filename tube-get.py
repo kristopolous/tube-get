@@ -6,9 +6,13 @@ UA="Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:30.0) Gecko/20100101 Firefox/41.0
 re_generic_url = re.compile('(http[:\s\/\w\.]*(?:flv|mp4)[^"\']*)')
 re_kv_url = re.compile('(?<=file=)(http[:\s\/\w\.]*(?:flv|mp4)[^"\']*)')
 pp = pprint.PrettyPrinter(indent=4)
+oneurl = False
 
 if len(sys.argv) > 1:
-    os.chdir(sys.argv[1])
+    if 'http' in sys.argv[1]:
+        oneurl = sys.argv[1]
+    else:
+        os.chdir(sys.argv[1])
 
 def shellquote(s):
     return "'" + s.replace("'", "'\\''") + "'"
@@ -41,7 +45,7 @@ def rtmpsearch(page, param):
 
     return [False, False, param]
 
-def probe(html, param=False, depth=1):
+def probe(html, param=False, depth=1, onlyurl=False):
     maxlevel=5
     if depth > maxlevel:
         log("{} levels deep, giving up".format(maxlevel))
@@ -52,7 +56,8 @@ def probe(html, param=False, depth=1):
     if video:
         video = filter(lambda x: x.find('.jpg') == -1, video)
         video = filter(lambda x: x.find('/thumbs/') == -1, video)
-        print(video)
+        if not onlyurl:
+            print(video)
 
     if not video:
         log("No mp4 found")
@@ -109,7 +114,7 @@ def probe(html, param=False, depth=1):
 
     return res
 
-def grab(line, param=False, depth=1):
+def grab(line, param=False, depth=1, onlyurl=False):
     if len(line) == 0:
         return False
 
@@ -121,15 +126,20 @@ def grab(line, param=False, depth=1):
 
     domain = re.search('(http[:\s\/]*[^\/]*)', line).group(1)
     cmd = 'curl -L -e {} -s -A {} {}'.format(shellquote(domain), shellquote(UA), shellquote(line))
-    print(cmd)
+    if not onlyurl:
+        print(cmd)
     page = os.popen(cmd).read()
     if not param:
         param = len(page)
 
-    return probe(page, param, depth)
+    return probe(page, param, depth, onlyurl=onlyurl)
 
 while True:
-    line = sys.stdin.readline().strip()
+    if oneurl:
+        line = oneurl
+    else:
+        line = sys.stdin.readline().strip()
+
     """
     if os.path.exists('/usr/bin/xclip'):
         print("xclip")
@@ -144,7 +154,12 @@ while True:
         continue
 
     #try:
-    video = grab(line)
+    video = grab(line, onlyurl=oneurl)
+
+    if oneurl:
+        if video:
+            print(video[1])
+        sys.exit(0)
     #except:
     #    print "Failed to read %s" % line
     #   continue
