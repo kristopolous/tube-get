@@ -1,5 +1,7 @@
 #!/usr/bin/python3
 import datetime
+import time
+import logging
 import sys,os,re,pprint,subprocess
 
 UA="Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:30.0) Gecko/20100101 Firefox/41.0"
@@ -7,6 +9,7 @@ re_generic_url = re.compile('(http[:\s\/\w\.]*(?:flv|mp4)[^"\']*)')
 re_kv_url = re.compile('(?<=file=)(http[:\s\/\w\.]*(?:flv|mp4)[^"\']*)')
 pp = pprint.PrettyPrinter(indent=4)
 oneurl = False
+start = time.time()
 
 if len(sys.argv) > 1:
     if 'http' in sys.argv[1]:
@@ -125,7 +128,7 @@ def grab(line, param=False, depth=1, onlyurl=False):
     line = re.sub(';', '\;', line)
 
     domain = re.search('(http[:\s\/]*[^\/]*)', line).group(1)
-    cmd = 'curl -L -e {} -s -A {} {}'.format(shellquote(domain), shellquote(UA), shellquote(line))
+    cmd = 'curl --tcp-fastopen -4 -L -e {} -s -A {} {}'.format(shellquote(domain), shellquote(UA), shellquote(line))
     if not onlyurl:
         print(cmd)
     page = os.popen(cmd).read()
