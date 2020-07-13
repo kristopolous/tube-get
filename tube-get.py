@@ -12,10 +12,10 @@ oneurl = False
 start = time.time()
 
 if len(sys.argv) > 1:
-    if 'http' in sys.argv[1]:
-        oneurl = sys.argv[1]
-    else:
+    if os.path.isdir(sys.argv[1]):
         os.chdir(sys.argv[1])
+    else:
+        oneurl = sys.argv[1]
 
 def shellquote(s):
     return "'" + s.replace("'", "'\\''") + "'"
@@ -127,13 +127,18 @@ def grab(line, param=False, depth=1, onlyurl=False):
     line = re.sub('\)', '%29', line)
     line = re.sub(';', '\;', line)
 
-    domain = re.search('(http[:\s\/]*[^\/]*)', line).group(1)
-    cmd = 'curl --tcp-fastopen -4 -L -e {} -s -A {} {}'.format(shellquote(domain), shellquote(UA), shellquote(line))
-    if not onlyurl:
-        print(cmd)
-    page = os.popen(cmd).read()
-    if not param:
-        param = len(page)
+    domain = re.search('(http[:\s\/]*[^\/]*)', line)
+    if domain:
+        domain = domain.group(1)
+        cmd = 'curl --tcp-fastopen -4 -L -e {} -s -A {} {}'.format(shellquote(domain), shellquote(UA), shellquote(line))
+        if not onlyurl:
+            print(cmd)
+        page = os.popen(cmd).read()
+        if not param:
+            param = len(page)
+    elif os.path.isfile(line):
+        with open(line) as f:
+            page = f.read()
 
     return probe(page, param, depth, onlyurl=onlyurl)
 
