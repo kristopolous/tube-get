@@ -21,7 +21,8 @@ def shellquote(s):
     return "'" + s.replace("'", "'\\''") + "'"
 
 def log(what):
-    print(">> %s" % what)
+    if not oneurl:
+        print(">> %s" % what)
 
 # If everything else failed then we look for an rtmp stanza
 # which is usually supplied in JSON and using flowplayer 
