@@ -101,7 +101,7 @@ def probe(html, param=False, depth=1, onlyurl=False):
     if res[0] == False:
         jsSnippet = re.findall('<script>(.+?(?=</script>))', html.replace('\n',' '), re.MULTILINE)
         if jsSnippet:
-            candidateList = filter(lambda x: x.find('String.fromCharCode') > -1, jsSnippet)
+            candidateList = list(filter(lambda x: x.find('String.fromCharCode') > -1, jsSnippet))
             if len(candidateList) > 0:
                 attempt = candidateList[0]
                 if attempt.find('document.write') > -1:
