@@ -40,7 +40,7 @@ Essentially you can do
 
 ```
 tp() { 
-  mplayer $(tube-get.py $1)
+  mpv $(tube-get.py $1)
 }
 ```
 
@@ -49,6 +49,10 @@ then just do:
     $ tp <url>
 
 on the command line. Super fast. 
+
+You can also use the other UX pattern by doing a 1-line REPL like this:
+
+    $ while read url; do mpv $(tube-get.py $url)&; done
 
 I currently do another more complicated set up that invovles a pipe, I've included the pipe tool in the directory for the curious. 
 
