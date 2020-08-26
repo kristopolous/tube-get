@@ -94,7 +94,7 @@ def probe(html, param=False, depth=1, onlyurl=False):
         iframe = re.findall('iframe[^>]*src=.(http[^"]*)', html)
         if iframe:
             log("Found iframe: %s" % iframe[0])
-            res = grab(iframe[0], param, depth+1)
+            res = grab(iframe[0], param, depth+1, onlyurl=onlyurl)
         else:
             log("No iframe found")
             res = rtmpsearch(html, param)
@@ -162,16 +162,12 @@ while True:
     if len(line) == 0:
         continue
 
-    #try:
     video = grab(line, onlyurl=oneurl)
 
     if oneurl:
         if video:
             print(video[1])
         sys.exit(0)
-    #except:
-    #    print "Failed to read %s" % line
-    #   continue
 
     if video[0] == False:
         url = "(FAILED)"
