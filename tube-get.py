@@ -137,9 +137,12 @@ def grab(line, param=False, depth=1, onlyurl=False):
         page = os.popen(cmd).read()
         if not param:
             param = len(page)
-    elif os.path.isfile(line):
+    elif os.path.exists(line) and not os.path.isdir(line):
         with open(line) as f:
             page = f.read()
+    else:
+        print("don't know what {} is".format(line))
+        sys.exit(0)
 
     return probe(page, param, depth, onlyurl=onlyurl)
 
