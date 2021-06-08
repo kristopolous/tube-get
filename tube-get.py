@@ -108,8 +108,8 @@ def probe(html, param=False, depth=1, onlyurl=False):
                 if attempt.find('document.write') > -1:
                     attempt = attempt.replace('document.write', 'console.log')
 
-                    cmd = "/usr/local/bin/node -e {}".format(shellquote(attempt))
-                    snippet = os.popen("/usr/local/bin/node -e {}".format(shellquote(attempt))).read()
+                    cmd = "/usr/bin/node -e {}".format(shellquote(attempt))
+                    snippet = os.popen("/usr/bin/node -e {}".format(shellquote(attempt))).read()
                     log("Found javascript obfuscation: {}".format(snippet))
 
                     res = probe(snippet, param, depth+1)
