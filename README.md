@@ -54,8 +54,17 @@ You can also use the other UX pattern by doing a 1-line REPL like this:
 
     $ while read url; do mpv $(tube-get.py $url)&; done
 
-I currently do another more complicated set up that invovles a pipe, I've included the pipe tool in the directory for the curious. 
+## Even faster ways
 
+The tool "clipwatch" in here will watch your clipboard and then optionally run a command if it changes.
+
+So if you do something like
+
+    $ echo "tp() { mpv $(tube-get.py $1) } > tp
+    $ chmod +x tp
+    $ bin/clipwatch tp
+
+And then rightclick, copy link. It will feed it into the tp command while clipwatch is running. Pretty sw33t
 
 ## Conclusion
 

@@ -1,0 +1,20 @@
+#!/bin/bash
+lastone=$(timeout 5s xclip -selection primary -o 2> /dev/null )
+lasttwo=$(timeout 5s xclip -selection clipboard -o 2> /dev/null)
+while [ 0 ]; do 
+  one=$(timeout 5s xclip -selection primary -o 2> /dev/null )
+  two=$(timeout 5s xclip -selection clipboard -o 2> /dev/null)
+  out=
+  clip=
+  [[ "$lastone" != "$one" ]] && out="MIDDLE : ${one:0:15}" && border=pink color=black clip=$one
+  [[ "$lasttwo" != "$two" ]] && out="$out\nNOT : ${two:0:15}" &&  border=orange color=blue clip=$two
+
+  if [[ -n "$1" && -n "$clip" ]]; then
+    $1 "$clip" &
+  else
+    [[ -n "$out" ]] && /bin/echo -e "${out:0:100}" | osd_cat -l 2 -f '-*-lucida-*-r-*-*-48-*-*-*-*-*-*-*' -u $border -O 3 -c $color -d 2 -p top -A left & 
+  fi
+  lastone=$one
+  lasttwo=$two
+  sleep 1.5 
+done
