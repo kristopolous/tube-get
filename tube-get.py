@@ -108,8 +108,8 @@ def probe(html, param=False, depth=1, onlyurl=False):
                 if attempt.find('document.write') > -1:
                     attempt = attempt.replace('document.write', 'console.log')
 
-                    cmd = "/usr/local/bin/node -e {}".format(shellquote(attempt))
-                    snippet = os.popen("/usr/local/bin/node -e {}".format(shellquote(attempt))).read()
+                    cmd = "/usr/bin/node -e {}".format(shellquote(attempt))
+                    snippet = os.popen("/usr/bin/node -e {}".format(shellquote(attempt))).read()
                     log("Found javascript obfuscation: {}".format(snippet))
 
                     res = probe(snippet, param, depth+1)
@@ -137,9 +137,12 @@ def grab(line, param=False, depth=1, onlyurl=False):
         page = os.popen(cmd).read()
         if not param:
             param = len(page)
-    elif os.path.isfile(line):
+    elif os.path.exists(line) and not os.path.isdir(line):
         with open(line) as f:
             page = f.read()
+    else:
+        print("don't know what {} is".format(line))
+        sys.exit(0)
 
     return probe(page, param, depth, onlyurl=onlyurl)
 
