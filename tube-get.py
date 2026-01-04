@@ -5,8 +5,8 @@ import logging
 import sys,os,re,pprint,subprocess
 
 UA="Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:30.0) Gecko/20100101 Firefox/41.0"
-re_generic_url = re.compile('(http[:\s\/\w\.]*(?:flv|mp4)[^"\']*)')
-re_kv_url = re.compile('(?<=file=)(http[:\s\/\w\.]*(?:flv|mp4)[^"\']*)')
+re_generic_url = re.compile(r'(http[:\s\/\w\.]*(?:flv|mp4)[^"\']*)')
+re_kv_url = re.compile(r'(?<=file=)(http[:\s\/\w\.]*(?:flv|mp4)[^"\']*)')
 pp = pprint.PrettyPrinter(indent=4)
 oneurl = False
 start = time.time()
@@ -27,8 +27,8 @@ def log(what):
 # If everything else failed then we look for an rtmp stanza
 # which is usually supplied in JSON and using flowplayer 
 def rtmpsearch(page, param):
-    path = re.findall('url:\s*[\'\"](.*(?:flv|mp4))[\'\"]', page)
-    base = re.findall('netConnectionUrl:\s*[\'\"](rtmp:[^\'\"]*)', page)
+    path = re.findall(r'url:\s*[\'\"](.*(?:flv|mp4))[\'\"]', page)
+    base = re.findall(r'netConnectionUrl:\s*[\'\"](rtmp:[^\'\"]*)', page)
 
     if path and base:
         # for some weird reason rtmpdump has a bug where it eats up the path
@@ -56,7 +56,7 @@ def probe(html, param=False, depth=1, onlyurl=False):
         return [False, False, False]
 
     #log(line)
-    video = re.findall('(http[:\-\s\/\w%\.=,+]*(?:flv|mp4)\??[^"\']*)[\"\']', html)
+    video = re.findall(r'(http[:\-\s\/\w%\.=,+]*(?:flv|mp4)\??[^"\']*)[\"\']', html)
     if video:
         video = filter(lambda x: x.find('.jpg') == -1, video)
         video = filter(lambda x: x.find('/thumbs/') == -1, video)
@@ -65,7 +65,7 @@ def probe(html, param=False, depth=1, onlyurl=False):
 
     if not video:
         log("No mp4 found")
-        player_config_url = re.findall('([:\/\w\.]*playerConfig.php[^"]*)', html)
+        player_config_url = re.findall(r'([:\/\w\.]*playerConfig.php[^"]*)', html)
 
         if not player_config_url:
             log("No config php found")
@@ -91,7 +91,7 @@ def probe(html, param=False, depth=1, onlyurl=False):
         return ['get', video[0], param]
 
     if not video:
-        iframe = re.findall('iframe[^>]*src=.(http[^"]*)', html)
+        iframe = re.findall(r'iframe[^>]*src=.(http[^"]*)', html)
         if iframe:
             log("Found iframe: %s" % iframe[0])
             res = grab(iframe[0], param, depth+1, onlyurl=onlyurl)
@@ -100,7 +100,7 @@ def probe(html, param=False, depth=1, onlyurl=False):
             res = rtmpsearch(html, param)
 
     if res[0] == False:
-        jsSnippet = re.findall('<script>(.+?(?=</script>))', html.replace('\n',' '), re.MULTILINE)
+        jsSnippet = re.findall(r'<script>(.+?(?=</script>))', html.replace('\n',' '), re.MULTILINE)
         if jsSnippet:
             candidateList = list(filter(lambda x: x.find('String.fromCharCode') > -1, jsSnippet))
             if len(candidateList) > 0:
@@ -124,11 +124,11 @@ def grab(line, param=False, depth=1, onlyurl=False):
 
     source_url = line
 
-    line = re.sub('\(', '%28', line)
-    line = re.sub('\)', '%29', line)
-    line = re.sub(';', '\;', line)
+    line = re.sub(r'\(', '%28', line)
+    line = re.sub(r'\)', '%29', line)
+    line = re.sub(r';', '\\;', line)
 
-    domain = re.search('(http[:\s\/]*[^\/]*)', line)
+    domain = re.search(r'(http[:\s\/]*[^\/]*)', line)
     if domain:
         domain = domain.group(1)
         cmd = 'curl --tcp-fastopen -4 -L -e {} -s -A {} {}'.format(shellquote(domain), shellquote(UA), shellquote(line))
@@ -177,13 +177,13 @@ while True:
     else:
         url = video[1]
         if video[0] == 'get':
-            has_domain = re.search('(http[:\s\/]*[^\/]*)', url) 
+            has_domain = re.search(r'(http[:\s\/]*[^\/]*)', url) 
 
             if not has_domain:
                 video = "%s/%s" % (domain, url)
 
             url = url.strip('\'"')
-            fname = re.sub('\?.*', '', url).rstrip('/').split('/')[-1]
+            fname = re.sub(r'\?.*', '', url).rstrip('/').split('/')[-1]
 
             options = " ".join([
                 '-O {}'.format(shellquote(fname)),
