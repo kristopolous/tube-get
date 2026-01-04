@@ -7,7 +7,10 @@ You use `yt-dlp`? Good! Me too.
 Doesn't always work. When it doesn't, tube-get is the more blunt hammer.
 
 Q: **I don't believe you**. 
-A: Here's just a random example. There's literally thousands of sites this pattern can be repeated on.
+
+A: Here's just a random example. There's literally thousands of smaller independent sites this pattern can be repeated on. yt-dlp is thwarted with its  does sophisticated techiques but tube-get blasts right through that.
+
+<img width="711" height="385" alt="example" src="https://github.com/user-attachments/assets/b5485556-6d83-4490-ae41-766df23fa7c2" />
 
 
 ## Usage
