@@ -1,4 +1,4 @@
-## tube-get
+# tube-get
 
 **tube-get** is a python script that acts as a browser independent easy way to freely download video content from video sites.
 
@@ -6,7 +6,11 @@ You use `yt-dlp`? Good! Me too.
 
 Doesn't always work. When it doesn't, tube-get is the more blunt hammer.
 
-# Usage
+Q: **I don't believe you**. 
+A: Here's just a random example. There's literally thousands of sites this pattern can be repeated on.
+
+
+## Usage
 
 There's an interactive (REPL) and non-interactive mode.
 
