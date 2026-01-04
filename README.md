@@ -13,6 +13,7 @@ A: Here's just a random example. There's literally thousands of smaller independ
 <img width="711" height="385" alt="example" src="https://github.com/user-attachments/assets/b5485556-6d83-4490-ae41-766df23fa7c2" />
 
 Q: I didn't realize you could just swap out the stubs at the end
+
 A: `select * from videos where id=% and is_deleted=null` ... do you really think the query on these sites is more sophisticated than this? (hint: it's not, most of them use open source platforms, go see for yourself)
 
 Anyways... moving on...
